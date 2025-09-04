@@ -22,6 +22,12 @@ func init() {
 		router.Post("/push", func(c *fiber.Ctx) error { return routeDoPush(c) })
 	})
 
+	registerRoute("homepage", func(router fiber.Router) {
+		router.Get("/", func(c *fiber.Ctx) error {
+			return c.SendFile("./index.html")
+		})
+	})
+
 	// compatible with old requests
 	registerRouteWithWeight("push_compat", 1, func(router fiber.Router) {
 		router.Get("/:device_key", func(c *fiber.Ctx) error { return routeDoPush(c) })
