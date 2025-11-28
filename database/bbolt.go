@@ -56,6 +56,9 @@ func (d *BboltDB) DeviceTokenByKey(key string) (string, error) {
 			return fmt.Errorf("failed to get [%s] device token from database", key)
 		} else {
 			token = string(bs)
+			if len(token) == 0 {
+				return fmt.Errorf("device token invalid")
+			}
 			return nil
 		}
 	})
@@ -87,6 +90,15 @@ func (d *BboltDB) SaveDeviceTokenByKey(key, deviceToken string) (string, error) 
 	}
 
 	return key, nil
+}
+
+// DeleteDeviceByKey delete device of specified key
+func (d *BboltDB) DeleteDeviceByKey(key string) error {
+	err := db.Update(func(tx *bbolt.Tx) error {
+		bucket := tx.Bucket([]byte(bucketName))
+		return bucket.Delete([]byte(key))
+	})
+	return err
 }
 
 // bboltSetup setup the bbolt database
